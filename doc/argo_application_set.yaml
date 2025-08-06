@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {backend|frontend}
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: staging
+            cluster: https://api.staging.k8s.intern
+            version: ${IMAGE_TAG}
+          - name: production
+            cluster: https://api.prod.k8s.intern
+            version: ${IMAGE_TAG}
+  template:
+    metadata:
+      name: '{{name}}-{backend|frontend}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/{backend|frontend}.git
+        targetRevision: main
+        path: helm
+        helm:
+          values:
+            image:
+              repository: ${REGISTRY}
+              image: ${REPOSITORY}/${IMAGE_NAME}
+              version: {{version}}
+      destination:
+        server: '{{cluster}}'
+        namespace: {backend|frontend}
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

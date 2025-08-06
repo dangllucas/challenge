@@ -4,5 +4,5 @@ metadata:
   name: {{ include "app.name" . }}
 rules:
   - apiGroups: [ "" ]
-    resources: [ "configmaps", "endpoints" ]
+    resources: [ "endpoints" ]
     verbs: [ "get", "list", "watch" ]

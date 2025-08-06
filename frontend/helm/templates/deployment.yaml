@@ -39,8 +39,6 @@ spec:
           image: "{{ .Values.image.repository }}/{{ .Values.image.image }}:{{ .Values.image.version }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "cluster"
             {{- range $name, $value := .Values.env }}
             - name: {{ $name }}
               value: {{ $value | quote }}
@@ -49,21 +47,25 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-            - name: management
-              containerPort: {{ .Values.service.managementPort }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              port: management
-              path: /actuator/health/liveness
+          startupProbe:
+            exec:
+              command:
+                - cat
+                - /etc/hostname
+            initialDelaySeconds: {{ (.Values.deployment).startup_initialdelay | default 15 }}
           readinessProbe:
             httpGet:
-              port: management
-              path: /actuator/health/readiness
-          startupProbe:
-            httpGet:
-              port: management
-              path: /actuator/health/readiness
+              port: http
+              path: /index.html
+            periodSeconds: {{ (.Values.deployment).readyprobe | default 5 }}
+            initialDelaySeconds: {{ (.Values.deployment).initialdelay | default 10 }}
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /etc/hostname
+            periodSeconds: {{ (.Values.deployment).liveperiod | default 5 }}
+            initialDelaySeconds: {{ (.Values.deployment).initialdelay | default 10 }}
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

@@ -1,7 +1,7 @@
 # Bearbeitung
 
-Start: 06.08.2025 16:03 Uhr
-Ende: 
+Start: 06.08.2025 17:00 Uhr
+Ende: 06.08.2025 20:00 Uhr
 
 ## Planung
 
@@ -15,6 +15,12 @@ Ende:
 - Npm
 
 ### Build
+
+Environment Variables:
+- REGISTRY: Die Image Registry
+- REPOSITORY: Die Image Repository
+- IMAGE_NAME: Der Image Name
+- IMAGE_TAG: Der Image Tag
 
 #### Backend
 - Mit Spring Boot Maven Plugin: `./mvnw spring-boot:build-image`
@@ -38,23 +44,12 @@ Ende:
 - Ausführung von End-2-End Tests über `npm run e2e`
 
 #### Helm Charts
-- Ausführung von Helm Linting `helm lint`
+- Ausführung von Helm Linting `helm lint` (in Helm Chart Ordner)
 
 ### Push
-- 
 
-### Deployment
+#### Backend & Frontend
+- Push über `docker push "${REGISTRY}/${REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG}"`
 
-- Mir persönlich wäre es am liebsten ein GitOps Tooling, wie ArgoCD, zu verwenden.
-- In dieser Aufgabe allerdings noch ein komplettes GitOps Tooling aufzusetzen würde den Rahmen sprengen.
-- 
-
-## Anmerkungen
-
-- ArgoCD
-  - ArgoCD sollte als zentrale Instanz auf einem separaten Kubernetes Cluster betrieben werden.
-  - Ebenfalls kann so ArgoCD für verschiedenste Projekte / Services verwendet werden. Die Deployment Target Cluster für ArgoCD können festgelegt werden.
-- Datenbank
-  - Ich persönlich würde eine Datenbank immer als separate Komponente betreiben und nicht als DB für ein Projekt betreiben.
-  - Dadurch entsteht eine zentrale DB, die von mehreren Services verwendet werden kann. Der Betrieb der DB lässt sich so durch "Experten" sicherstellen und landet nicht in der Verantwortung von Entwicklern.
-  - Zentrales Management von Snapshots / Backups und mögliches Disaster Recovery.
+#### Helm Charts
+- Push über `helm push ${CHART_NAME}-${CHART_VERSION}.tgz oci://${REGISTRY}/${REPOSITORY}`

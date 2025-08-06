@@ -1,4 +1,4 @@
-# BWI Senior DevOps Challenge
+# Senior DevOps Challenge
 
 # [Aufgabenstellung](doc/1_aufgabenstellung.md)
 # [Build Test Push](doc/2_build_test_push.md)
